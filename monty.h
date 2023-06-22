@@ -42,5 +42,6 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 int handle_additional_text(char *rest, unsigned int line_number);
 void pint(stack_t **stack, unsigned int line_number);
 void pop(stack_t **stack, unsigned int line_number);
+void swap(stack_t **stack, unsigned int line_number);
 
 #endif
