@@ -1,4 +1,7 @@
 #include "monty.h"
+
+FileData globalData = {NULL, NULL};
+
 /**
  * main - Entry point
  * @argc: number of arg
@@ -7,10 +10,10 @@
  */
 int main(int argc, char *argv[])
 {
-	char *buffer;
+	/*char *buffer;*/
 	size_t buffer_size;
 	ssize_t read;
-	FILE *file;
+	/*FILE *file;*/
 	stack_t *stack = NULL;
 	unsigned int line_number;
 	char *opcode;
@@ -23,29 +26,29 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
-	file = fopen(argv[1], "r");
-	if (file == NULL)
+	globalData.file = fopen(argv[1], "r");
+	if (globalData.file == NULL)
 	{
 		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
 		return (EXIT_FAILURE);
         }
 
-	buffer = NULL;
+	globalData.buffer = NULL;
 	buffer_size = 0;
 
 	stack = NULL;
 	line_number = 0;
 
-	while ((read = getline(&buffer, &buffer_size, file)) != -1)
+	while ((read = getline(&globalData.buffer, &buffer_size, globalData.file)) != -1)
 	{
 		line_number++;
 
 		/* Skip blank lines */
-		if (read == 1 || (read == 2 && buffer[0] == ' '))
+		if (read == 1 || (read == 2 && globalData.buffer[0] == ' '))
                         continue;
 
 		/* Extract the opcode and its argument */
-		opcode = strtok(buffer, " \t\n");
+		opcode = strtok(globalData.buffer, " \t\n");
 		/* Check if opcode is valid */
 		if (opcode == NULL || opcode[0] == '#')
 			continue;
@@ -56,8 +59,8 @@ int main(int argc, char *argv[])
 		{
 			fprintf(stderr, "L%d: unknown instruction %s\n", line_number, opcode);
 			free_stack(stack);
-			free(buffer);
-			fclose(file);
+			free(globalData.buffer);
+			fclose(globalData.file);
 			return (EXIT_FAILURE);
 		}
 	
@@ -68,15 +71,15 @@ int main(int argc, char *argv[])
 		if (handle_additional_text(rest, line_number))
 		{
 			free_stack(stack);
-			free(buffer);
-			fclose(file);
-			exit (EXIT_FAILURE);
+			free(globalData.buffer);
+			fclose(globalData.file);
+			return (EXIT_FAILURE);
 		}
 
 	}
 	free_stack(stack);
-	free(buffer);
-	fclose(file);
+	free(globalData.buffer);
+	fclose(globalData.file);
 	return (EXIT_SUCCESS);
 }
 

@@ -50,4 +50,9 @@ void opcode_div(stack_t **stack, unsigned int line_number);
 void opcode_mul(stack_t **stack, unsigned int line_number);
 void opcode_mod(stack_t **stack, unsigned int line_number);
 
+typedef struct {
+	FILE *file;
+	char *buffer;
+} FileData;
+extern FileData globalData;
 #endif

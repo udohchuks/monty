@@ -14,7 +14,10 @@ void push(stack_t **stack, unsigned int line_number)
 	if (!argument)
 	{
 		fprintf(stderr, "L%d: usage: push integer\n", line_number);
-		return;
+		free_stack(*stack);
+		free(globalData.buffer);
+		fclose(globalData.file);
+		exit(EXIT_FAILURE);
 	}
 	(void) line_number;
 	/* Create a new stack node */
@@ -22,6 +25,9 @@ void push(stack_t **stack, unsigned int line_number)
 	if (new_node == NULL)
 	{
 		fprintf(stderr, "Error: malloc failed\n");
+		free_stack(*stack);
+		free(globalData.buffer);
+                fclose(globalData.file);
 		exit(EXIT_FAILURE);
 	}
 	/* Set the value of the new node */
