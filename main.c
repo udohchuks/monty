@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
 	unsigned int line_number;
 	char *opcode;
 	void (*func)(stack_t **, unsigned int);
+	char *rest;
 
 	if (argc != 2)
 	{
@@ -59,9 +60,19 @@ int main(int argc, char *argv[])
 			fclose(file);
 			return (EXIT_FAILURE);
 		}
-
+	
 		/* Execute the opcode function */
 		func(&stack, line_number);
+
+		rest = strtok(NULL, " \t\n");
+		if (handle_additional_text(rest, line_number))
+		{
+			free_stack(stack);
+			free(buffer);
+			fclose(file);
+			exit (EXIT_FAILURE);
+		}
+
 	}
 	free_stack(stack);
 	free(buffer);
@@ -69,3 +80,19 @@ int main(int argc, char *argv[])
 	return (EXIT_SUCCESS);
 }
 
+/**
+ * handle_additional_text - handles extra text
+ * @rest: rest
+ * @line_number: line number
+ * Return: 1 / 0
+ */
+
+int handle_additional_text(char *rest, unsigned int line_number)
+{
+	if (rest != NULL && rest[0] != '#' && rest[0] != '\n')
+	{
+		fprintf(stderr, "L%d: unexpected text after instruction\n", line_number);
+		return (1);
+	}
+	return (0);
+}
